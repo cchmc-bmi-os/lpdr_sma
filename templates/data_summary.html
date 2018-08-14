@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/heatmap.js"></script>
+<script src="https://code.highcharts.com/modules/treemap.js"></script>
+
+
+<script>
+
+var diagnosis = JSON.parse('{{ DIAGNOSIS | escapejs }}'),
+genders = JSON.parse('{{ GENDERS | escapejs }}'),
+races = JSON.parse('{{ RACES | escapejs }}')
+  
+
+
+Highcharts.chart('div_diagnosis', {
+ series: [{
+  type: 'treemap',
+  layoutAlgorithm: 'squarified',
+  allowDrillToNode: true,
+  animationLimit: 1000,
+  dataLabels: {
+   enabled: false
+  },
+  levelIsConstant: false,
+  levels: [{
+   level: 1,
+   dataLabels: {
+    enabled: true
+   },
+   borderWidth: 3
+  }],
+  data: diagnosis
+ }],
+
+ subtitle: {
+  text: 'Click points to drill down. Source: <a href="http://apps.who.int/gho/data/node.main.12?lang=en">NBSmart</a>.'
+ },
+
+ title: {
+  text: 'Diagnosis'
+ }
+
+  });
+
+
+  Highcharts.chart('div_genders', {
+   chart: {
+    plotBackgroundColor: null,
+    plotBorderWidth: null,
+    plotShadow: false,
+    type: 'pie'
+   },
+   title: {
+    text: 'Gender repartition'
+    },
+   tooltip: {
+    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+   },
+   plotOptions: {
+    pie: {
+     allowPointSelect: true,
+     cursor: 'pointer',
+     dataLabels: {
+      enabled: true,
+      format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+      style: {
+       color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+      }
+     }
+    }
+   },
+   series: [{
+    name: 'Genders',
+    colorByPoint: true,
+    data: genders
+   }]
+  });
+
+
+  Highcharts.chart('div_races', {
+   chart: {
+    plotBackgroundColor: null,
+    plotBorderWidth: null,
+    plotShadow: false,
+    type: 'pie'
+   },
+   title: {
+    text: 'Races repartition'
+    },
+   tooltip: {
+    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+   },
+   plotOptions: {
+    pie: {
+     allowPointSelect: true,
+     cursor: 'pointer',
+     dataLabels: {
+      enabled: true,
+      format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+      style: {
+       color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+      }
+     }
+    }
+   },
+   series: [{
+    name: 'Races',
+    colorByPoint: true,
+    data: races
+   }]
+  });
+
+
+
+
+</script>
+  {% endblock scripts %}
+
+{% block content %}
+
+<center><h2>Data Summary</h2></center>
+
+<hr/>
+<div id="div_diagnosis"></div>
+<hr/>
+<div id="div_genders"></div>
+<hr/>
+<div id="div_races"></div>
+<hr/>
+{% endblock %}
+
+<!-- http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treemap-large-dataset/ -->
